@@ -1,0 +1,371 @@
+/*
+ * To change this license header, choose License Headers in Project Properties.
+ * To change this template file, choose Tools | Templates
+ * and open the template in the editor.
+ */
+package view;
+
+import controller.MuonTraDAO;
+import java.awt.Color;
+import java.awt.Component;
+import java.awt.Graphics;
+import java.awt.Graphics2D;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.print.PageFormat;
+import java.awt.print.Printable;
+import java.awt.print.PrinterException;
+import java.awt.print.PrinterJob;
+import java.util.ArrayList;
+import javax.swing.JOptionPane;
+import javax.swing.JScrollPane;
+import javax.swing.JTable;
+import javax.swing.table.DefaultTableCellRenderer;
+import javax.swing.table.DefaultTableModel;
+import javax.swing.table.TableCellRenderer;
+import javax.swing.table.TableColumnModel;
+import model.AllDetails;
+import static view.DKMuonTraView.adminID;
+import static view.DKMuonTraView.adminName;
+import static view.DKMuonTraView.maMT;
+import static view.DKMuonTraView.strNgayMuon;
+import static view.DKMuonTraView.strTienCoc;
+import static view.DKMuonTraView.userID;
+import static view.DKMuonTraView.userName;
+
+/**
+ *
+ * @author Admin
+ */
+public class PrintChiTietMT extends javax.swing.JFrame implements ActionListener {
+
+    /**
+     * Creates new form PrintChiTietMT
+     */
+    public PrintChiTietMT() {
+        initComponents();
+        this.setTitle("Print Invoice");
+        this.setLocationRelativeTo(null);
+
+        btnCanel.addActionListener(this);
+        btnPrint.addActionListener(this);
+        lbAdminID.setText("AdminID: " + adminID);
+        lbAdminName.setText("AdminName:" + adminName);
+        lbMaMT.setText("MaMT: " + maMT);
+        lbUserID.setText("UserID: " + userID);
+        lbUserName.setText("UserName: " + userName);
+        lbNgayMuon.setText("Hà Nội, " + strNgayMuon);
+        lbTienCoc.setText("Tiền Cọc: "+strTienCoc);
+
+        setTableColor(tbl, jScrollPane1);
+        showTbl();
+
+    }
+
+    public void setTableColor(JTable tbl, JScrollPane jScrollPane1) {
+        tbl.setBackground(new Color(0, 0, 0, 0));
+        ((DefaultTableCellRenderer) tbl.getDefaultRenderer(Object.class)).setBackground(new Color(0, 0, 0, 0));
+        jScrollPane1.setBackground(new Color(0, 0, 0, 0));
+        jScrollPane1.setOpaque(false);
+        tbl.setOpaque(false);
+        ((DefaultTableCellRenderer) tbl.getDefaultRenderer(Object.class)).setOpaque(false);
+        jScrollPane1.getViewport().setOpaque(false);
+    }
+
+    public void resizeColumnWidth(JTable table) {
+        final TableColumnModel columnModel = table.getColumnModel();
+        for (int column = 0; column < table.getColumnCount(); column++) {
+            int width = 15; // Min width
+            for (int row = 0; row < table.getRowCount(); row++) {
+                TableCellRenderer renderer = table.getCellRenderer(row, column);
+                Component comp = table.prepareRenderer(renderer, row, column);
+                width = Math.max(comp.getPreferredSize().width + 1, width);
+            }
+            if (width > 150) {
+                width = 150;
+            }
+            columnModel.getColumn(column).setPreferredWidth(width);
+        }
+    }
+
+    public void showTbl() {
+        int i = 1;
+        ArrayList<AllDetails> listCT = new MuonTraDAO().getlistCTMTToPrint(maMT);
+        DefaultTableModel modelTbl = new DefaultTableModel();
+
+        modelTbl.setColumnIdentifiers(new Object[]{
+            "STT", "TenSach", "HanTra"
+        });
+        for (AllDetails ct : listCT) {
+            modelTbl.addRow(new Object[]{
+                i++, ct.getDocName(), ct.getHanTra()
+            });
+        }
+        tbl.setModel(modelTbl);//set model cho table
+        resizeColumnWidth(tbl);
+    }
+
+    public void clickPrint() {
+        PrinterJob job = PrinterJob.getPrinterJob();
+        job.setJobName("Print Data");
+
+        job.setPrintable(new Printable() {
+            public int print(Graphics pg, PageFormat pf, int pageNum) {
+                pf.setOrientation(PageFormat.PORTRAIT);
+                if (pageNum > 0) {
+                    return Printable.NO_SUCH_PAGE;
+                }
+
+                Graphics2D g2 = (Graphics2D) pg;
+//                jPanel1.setBorder(new javax.swing.border.EtchedBorder());
+//                jLabel1.setBounds(new java.awt.Rectangle(0, 0, 300, 300));
+                g2.translate(pf.getImageableX(), pf.getImageableY());
+                g2.scale(0.24, 0.24);
+
+                jPanel1.paint(g2);
+
+                return Printable.PAGE_EXISTS;
+
+            }
+        });
+
+        boolean ok = job.printDialog();
+        if (ok) {
+            try {
+
+                job.print();
+            } catch (PrinterException ex) {
+                ex.printStackTrace();
+            }
+        }
+    }
+
+    /**
+     * This method is called from within the constructor to initialize the form.
+     * WARNING: Do NOT modify this code. The content of this method is always
+     * regenerated by the Form Editor.
+     */
+    @SuppressWarnings("unchecked")
+    // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
+    private void initComponents() {
+
+        jPanel2 = new javax.swing.JPanel();
+        btnPrint = new javax.swing.JButton();
+        btnCanel = new javax.swing.JButton();
+        jPanel1 = new javax.swing.JPanel();
+        jLabel1 = new javax.swing.JLabel();
+        lbNgayMuon = new javax.swing.JLabel();
+        lbMaMT = new javax.swing.JLabel();
+        lbUserName = new javax.swing.JLabel();
+        lbUserID = new javax.swing.JLabel();
+        lbAdminName = new javax.swing.JLabel();
+        lbAdminID = new javax.swing.JLabel();
+        jScrollPane1 = new javax.swing.JScrollPane();
+        tbl = new javax.swing.JTable();
+        jLabel2 = new javax.swing.JLabel();
+        lbTienCoc = new javax.swing.JLabel();
+
+        setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+        setBackground(new java.awt.Color(255, 255, 255));
+
+        jPanel2.setBackground(new java.awt.Color(255, 255, 255));
+        jPanel2.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
+
+        btnPrint.setText("Print");
+
+        btnCanel.setText("Cancel");
+
+        jPanel1.setBackground(new java.awt.Color(255, 255, 255));
+        jPanel1.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
+
+        jLabel1.setFont(new java.awt.Font("Tahoma", 1, 12)); // NOI18N
+        jLabel1.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        jLabel1.setText("Phiếu Thông Tin Mượn Trả");
+
+        lbNgayMuon.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        lbNgayMuon.setText("ngày tháng năm");
+
+        lbMaMT.setText("Mã mượn trả");
+
+        lbUserName.setText("UserName");
+
+        lbUserID.setText("UserID");
+
+        lbAdminName.setText("AdminName");
+
+        lbAdminID.setText("AdminID");
+
+        jScrollPane1.setBackground(new java.awt.Color(255, 255, 255));
+
+        tbl.setModel(new javax.swing.table.DefaultTableModel(
+            new Object [][] {
+
+            },
+            new String [] {
+
+            }
+        ));
+        tbl.setGridColor(new java.awt.Color(102, 102, 102));
+        jScrollPane1.setViewportView(tbl);
+
+        jLabel2.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        jLabel2.setText("--------------------------------------------o0o-------------------------------------------");
+
+        lbTienCoc.setText("Tiền cọc");
+
+        javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
+        jPanel1.setLayout(jPanel1Layout);
+        jPanel1Layout.setHorizontalGroup(
+            jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel1Layout.createSequentialGroup()
+                .addGap(23, 23, 23)
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                    .addComponent(lbAdminName, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(lbUserName, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(lbMaMT, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 242, Short.MAX_VALUE))
+                .addGap(18, 18, 18)
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                    .addComponent(lbUserID, javax.swing.GroupLayout.DEFAULT_SIZE, 128, Short.MAX_VALUE)
+                    .addComponent(lbAdminID, javax.swing.GroupLayout.DEFAULT_SIZE, 128, Short.MAX_VALUE)
+                    .addComponent(lbTienCoc, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addGap(50, 50, 50))
+            .addComponent(lbNgayMuon, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+            .addComponent(jLabel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+            .addComponent(jScrollPane1, javax.swing.GroupLayout.Alignment.TRAILING)
+            .addComponent(jLabel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+        );
+        jPanel1Layout.setVerticalGroup(
+            jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel1Layout.createSequentialGroup()
+                .addGap(30, 30, 30)
+                .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 27, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(18, 18, 18)
+                .addComponent(lbNgayMuon, javax.swing.GroupLayout.PREFERRED_SIZE, 27, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(18, 18, 18)
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                    .addComponent(lbMaMT, javax.swing.GroupLayout.DEFAULT_SIZE, 27, Short.MAX_VALUE)
+                    .addComponent(lbTienCoc, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addGap(18, 18, 18)
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(lbUserID, javax.swing.GroupLayout.PREFERRED_SIZE, 27, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(lbUserName, javax.swing.GroupLayout.PREFERRED_SIZE, 27, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGap(18, 18, 18)
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(lbAdminName, javax.swing.GroupLayout.PREFERRED_SIZE, 27, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(lbAdminID, javax.swing.GroupLayout.PREFERRED_SIZE, 27, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGap(34, 34, 34)
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 192, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 42, Short.MAX_VALUE)
+                .addComponent(jLabel2)
+                .addGap(40, 40, 40))
+        );
+
+        javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
+        jPanel2.setLayout(jPanel2Layout);
+        jPanel2Layout.setHorizontalGroup(
+            jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+            .addGroup(jPanel2Layout.createSequentialGroup()
+                .addGap(115, 115, 115)
+                .addComponent(btnPrint, javax.swing.GroupLayout.PREFERRED_SIZE, 70, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(84, 84, 84)
+                .addComponent(btnCanel)
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+        );
+        jPanel2Layout.setVerticalGroup(
+            jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel2Layout.createSequentialGroup()
+                .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(22, 22, 22)
+                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(btnCanel)
+                    .addComponent(btnPrint))
+                .addContainerGap(55, Short.MAX_VALUE))
+        );
+
+        javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
+        getContentPane().setLayout(layout);
+        layout.setHorizontalGroup(
+            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addComponent(jPanel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+        );
+        layout.setVerticalGroup(
+            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addComponent(jPanel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+        );
+
+        pack();
+    }// </editor-fold>//GEN-END:initComponents
+
+    /**
+     * @param args the command line arguments
+     */
+    public static void main(String args[]) {
+        /* Set the Nimbus look and feel */
+        //<editor-fold defaultstate="collapsed" desc=" Look and feel setting code (optional) ">
+        /* If Nimbus (introduced in Java SE 6) is not available, stay with the default look and feel.
+         * For details see http://download.oracle.com/javase/tutorial/uiswing/lookandfeel/plaf.html 
+         */
+        try {
+            for (javax.swing.UIManager.LookAndFeelInfo info : javax.swing.UIManager.getInstalledLookAndFeels()) {
+                if ("Nimbus".equals(info.getName())) {
+                    javax.swing.UIManager.setLookAndFeel(info.getClassName());
+                    break;
+                }
+            }
+        } catch (ClassNotFoundException ex) {
+            java.util.logging.Logger.getLogger(PrintChiTietMT.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+        } catch (InstantiationException ex) {
+            java.util.logging.Logger.getLogger(PrintChiTietMT.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+        } catch (IllegalAccessException ex) {
+            java.util.logging.Logger.getLogger(PrintChiTietMT.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+        } catch (javax.swing.UnsupportedLookAndFeelException ex) {
+            java.util.logging.Logger.getLogger(PrintChiTietMT.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+        }
+        //</editor-fold>
+        /* Set the jTattoo look and feel */
+        try {
+            javax.swing.UIManager.setLookAndFeel("com.jtattoo.plaf.smart.SmartLookAndFeel");
+
+        } catch (Exception e) {
+            System.err.println("Look and feel not set.");
+        }
+        /* Create and display the form */
+        java.awt.EventQueue.invokeLater(new Runnable() {
+            public void run() {
+                new PrintChiTietMT().setVisible(true);
+            }
+        });
+    }
+
+    // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JButton btnCanel;
+    private javax.swing.JButton btnPrint;
+    private javax.swing.JLabel jLabel1;
+    private javax.swing.JLabel jLabel2;
+    private javax.swing.JPanel jPanel1;
+    private javax.swing.JPanel jPanel2;
+    private javax.swing.JScrollPane jScrollPane1;
+    public javax.swing.JLabel lbAdminID;
+    public javax.swing.JLabel lbAdminName;
+    public javax.swing.JLabel lbMaMT;
+    public javax.swing.JLabel lbNgayMuon;
+    public static javax.swing.JLabel lbTienCoc;
+    public javax.swing.JLabel lbUserID;
+    public javax.swing.JLabel lbUserName;
+    private javax.swing.JTable tbl;
+    // End of variables declaration//GEN-END:variables
+
+    @Override
+    public void actionPerformed(ActionEvent e) {
+        if (e.getSource() == btnCanel) {
+            new AdminView().setVisible(true);
+            this.dispose();
+        } else if (e.getSource() == btnPrint) {
+            clickPrint();
+            JOptionPane.showMessageDialog(rootPane, "successful");
+//            new DKMuonTraView().setVisible(true);
+//            this.dispose();
+        }
+    }
+}
